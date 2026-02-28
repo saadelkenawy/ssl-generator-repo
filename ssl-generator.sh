@@ -200,16 +200,12 @@ verify_chain() {
     local domain_clean=$1
     local inter_cert=$2
     local root_cert=$3
-    local combined_ca
-    combined_ca=$(mktemp)
-    cat "$inter_cert" "$root_cert" > "$combined_ca"
     echo -e "\n${GREEN}[*] Verifying certificate chain for ${domain_clean}.crt...${NC}"
-    if openssl verify -CAfile "$combined_ca" "${domain_clean}.crt" > /dev/null 2>&1; then
+    if openssl verify -CAfile "$root_cert" -untrusted "$inter_cert" "${domain_clean}.crt" > /dev/null 2>&1; then
         echo -e "${GREEN}Chain verification: PASSED${NC}"
     else
         echo -e "${RED}Chain verification: FAILED - check your certificate files${NC}"
     fi
-    rm -f "$combined_ca"
 }
 
 # --- Task 8: Certificate Info Writer ---
@@ -279,7 +275,7 @@ generate_server_cert() {
     openssl genrsa -out "${domain_clean}.key" 2048
 
     local server_subj="${dn_base}/CN=$domain_cn"
-    openssl req -new -key "${domain_clean}.key" -out "${domain_clean}.csr" -subj "$server_subj" \
+    MSYS_NO_PATHCONV=1 openssl req -new -key "${domain_clean}.key" -out "${domain_clean}.csr" -subj "$server_subj" \
         -addext "subjectAltName=$san_string"
 
     # Sign with 3 years validity (1095 days)
@@ -296,9 +292,6 @@ generate_server_cert() {
     echo -e "${GREEN}Full chain: ${domain_clean}-fullchain.pem${NC}"
     # Task 10: Plain-text key storage warning
     echo -e "${YELLOW}Security: '${domain_clean}.key' is stored unencrypted. Restrict access to this directory.${NC}"
-
-    # Return the domain_clean name for later use
-    echo "$domain_clean"
 }
 
 # --- Main Script ---
@@ -523,7 +516,7 @@ if [[ "$MODE" == "1" ]]; then
     # Generate Root CA
     echo -e "\n${GREEN}[*] Creating Root CA...${NC}"
     openssl genrsa -out root_key.pem 4096
-    openssl req -x509 -new -nodes -key root_key.pem -sha256 -days 3650 \
+    MSYS_NO_PATHCONV=1 openssl req -x509 -new -nodes -key root_key.pem -sha256 -days 3650 \
         -out root_cert.pem -subj "${DN_BASE}/CN=Server Secure Root CA | By $USER_NAME"
     # Task 10: Plain-text key storage warning
     echo -e "${YELLOW}Security: 'root_key.pem' is stored unencrypted. Restrict access to this directory.${NC}"
@@ -531,7 +524,7 @@ if [[ "$MODE" == "1" ]]; then
     # Task 3 (4096-bit) & Task 4 (5-year validity): Generate Intermediate CA
     echo -e "\n${GREEN}[*] Creating Intermediate CA...${NC}"
     openssl genrsa -out inter_key.pem 4096
-    openssl req -new -key inter_key.pem -out inter.csr \
+    MSYS_NO_PATHCONV=1 openssl req -new -key inter_key.pem -out inter.csr \
         -subj "${DN_BASE}/CN=Intermediate Secure Server CA | By $USER_NAME"
     echo -e "${YELLOW}Security: 'inter_key.pem' is stored unencrypted. Restrict access to this directory.${NC}"
 
