@@ -251,13 +251,22 @@ write_generation_log() {
 # --- Function to generate a server certificate (used in both modes) ---
 generate_server_cert() {
     local domain_cn=$1
-    local san_dns_array=("${!2}")
-    local san_ip_array=("${!3}")
     local inter_key=$4
     local inter_cert=$5
     local root_cert=$6
-    local dn_base=$7          # Base DN without CN (e.g., "/C=EG/ST=Cairo/L=Maadi/O=SSZ LTD/OU=IT")
-    local user_name=$8        # Optional, for documentation
+    local dn_base=$7
+    local user_name=$8
+
+    # Safely copy caller arrays — ${!n} on empty arrays fails under set -u in bash < 5
+    local -a san_dns_array=()
+    local -a san_ip_array=()
+    local _dns_var="${2%%\[*}"
+    local _ip_var="${3%%\[*}"
+    local _dns_len _ip_len
+    eval "_dns_len=\${#${_dns_var}[@]}"
+    eval "_ip_len=\${#${_ip_var}[@]}"
+    [[ $_dns_len -gt 0 ]] && eval "san_dns_array=(\"\${${2}}\")"
+    [[ $_ip_len -gt 0 ]] && eval "san_ip_array=(\"\${${3}}\")"
 
     local domain_clean
     domain_clean=$(echo "$domain_cn" | sed 's/\./-/g')
