@@ -1,6 +1,6 @@
 [ssl-generator]
 name=SSL Generator - PKI Certificate Tool
-baseurl=https://YOUR_GITHUB_USERNAME.github.io/ssl-generator-repo
+baseurl=https://saadelkenawy.github.io/ssl-generator-repo
 enabled=1
 gpgcheck=0
 metadata_expire=300
