@@ -10,7 +10,7 @@
 
 ```bash
 sudo curl -o /etc/yum.repos.d/ssl-generator.repo \
-  https://YOUR_GITHUB_USERNAME.github.io/ssl-generator-repo/ssl-generator.repo
+  https://saadelkenawy.github.io/ssl-generator-repo/ssl-generator.repo
 ```
 
 ### Step 2 — Install
