@@ -246,10 +246,48 @@ code {
 .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 
 /* ── FOOTER ── */
+/* ── DONATE ── */
+.donate-section {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+.donate-section p {
+  color: var(--muted);
+  font-size: .9rem;
+  margin-bottom: 1.2rem;
+}
+.donate-section p span { color: var(--text); }
+.donate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  background: #FF5E5B;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  padding: .75rem 1.8rem;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  letter-spacing: .01em;
+}
+.donate-btn:hover { background: #e04e4b; transform: translateY(-1px); }
+.donate-btn svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+.donate-note {
+  margin-top: .9rem;
+  font-size: .78rem;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
 footer {
   text-align: center;
-  padding: 2.5rem;
-  border-top: 1px solid var(--border);
+  padding: 1.5rem 2.5rem 2.5rem;
   color: var(--muted);
   font-size: .82rem;
 }
@@ -530,11 +568,20 @@ Do you want to create another certificate? (y/n): <span class="hi">n</span>
 
 </div><!-- /wrapper -->
 
+<!-- DONATE -->
+<div class="donate-section">
+  <p><span>If this tool saved you time, consider buying me a coffee ☕</span></p>
+  <a class="donate-btn"
+     href="https://ko-fi.com/saadelkenawy"
+     target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+    </svg>
+    Buy me a Coffee
+  </a>
+  <div class="donate-note">ko-fi.com/saadelkenawy</div>
+</div>
+
 <footer>
   ssl-generator · By Saad El-Kenawy ·
-  <a href="https://saadelkenawy.github.io/ssl-generator-repo" target="_blank">Repository</a> ·
-  <a href="https://github.com/saadelkenawy/ssl-generator-repo" target="_blank">GitHub</a>
-</footer>
-
-</body>
-</html>
+  <a href="https://saadelkenawy.github.io/ssl-generator-repo" target="_blank">Repositor
