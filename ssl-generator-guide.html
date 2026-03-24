@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ssl-generator — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #0a0c10;
+  --surface:  #111318;
+  --border:   #1e2230;
+  --accent:   #00e5ff;
+  --accent2:  #7c3aed;
+  --green:    #22c55e;
+  --yellow:   #f59e0b;
+  --red:      #ef4444;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --code-bg:  #0d1117;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative;
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% -10%, rgba(0,229,255,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 60%, rgba(124,58,237,.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  color: var(--accent);
+  background: rgba(0,229,255,.08);
+  border: 1px solid rgba(0,229,255,.25);
+  border-radius: 2px;
+  padding: .3rem .9rem;
+  margin-bottom: 1.4rem;
+  text-transform: uppercase;
+}
+header h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+header h1 span { color: var(--accent); }
+header p {
+  margin-top: .9rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 520px;
+  margin-inline: auto;
+}
+.header-meta {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.meta-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  padding: .35rem .85rem;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.meta-pill.green  { color: var(--green);  border-color: rgba(34,197,94,.3);  background: rgba(34,197,94,.06);  }
+.meta-pill.cyan   { color: var(--accent); border-color: rgba(0,229,255,.3);  background: rgba(0,229,255,.06);  }
+.meta-pill.purple { color: #a78bfa;       border-color: rgba(124,58,237,.3); background: rgba(124,58,237,.06); }
+
+/* ── LAYOUT ── */
+.wrapper { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 3.5rem 0 1.5rem;
+}
+.section-title .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  color: var(--accent);
+  background: rgba(0,229,255,.08);
+  border: 1px solid rgba(0,229,255,.2);
+  border-radius: 2px;
+  padding: .2rem .6rem;
+  min-width: 2.4rem;
+  text-align: center;
+}
+.section-title h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: 1rem;
+}
+.card-header .icon {
+  width: 28px; height: 28px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .85rem;
+  flex-shrink: 0;
+}
+.icon-green  { background: rgba(34,197,94,.12);  color: var(--green);  }
+.icon-cyan   { background: rgba(0,229,255,.12);   color: var(--accent); }
+.icon-purple { background: rgba(124,58,237,.12);  color: #a78bfa;       }
+.icon-yellow { background: rgba(245,158,11,.12);  color: var(--yellow); }
+.icon-red    { background: rgba(239,68,68,.12);   color: var(--red);    }
+
+.card-header h3 { font-size: 1rem; font-weight: 600; }
+
+/* ── CODE BLOCK ── */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  margin: .75rem 0;
+}
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem;
+  line-height: 1.7;
+  color: #e6edf3;
+}
+.c  { color: var(--muted); }          /* comment */
+.kw { color: var(--accent); }         /* keyword/command */
+.st { color: var(--green); }          /* string/path */
+.nu { color: var(--yellow); }         /* number */
+.er { color: var(--red); }            /* error */
+.ok { color: var(--green); }          /* success */
+
+/* ── STEP LIST ── */
+.step-list { list-style: none; }
+.step-list li {
+  display: flex;
+  gap: 1rem;
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.step-list li:last-child { border-bottom: none; }
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  color: var(--accent);
+  min-width: 1.6rem;
+  padding-top: .15rem;
+}
+.step-content p  { font-size: .93rem; color: var(--text); }
+.step-content em { color: var(--muted); font-style: normal; font-size: .85rem; display: block; margin-top: .2rem; }
+
+/* ── OUTPUT BOX ── */
+.output-box {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 4px;
+  padding: 1rem 1.2rem;
+  margin-top: .75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  line-height: 1.8;
+  color: #94a3b8;
+}
+.output-box .ok  { color: var(--green); }
+.output-box .hi  { color: var(--accent); }
+.output-box .dim { color: #475569; }
+
+/* ── WARNING ── */
+.warn {
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.25);
+  border-left: 3px solid var(--yellow);
+  border-radius: 4px;
+  padding: .85rem 1.1rem;
+  font-size: .88rem;
+  color: #fcd34d;
+  margin-top: .75rem;
+}
+.warn strong { display: block; margin-bottom: .2rem; color: var(--yellow); }
+
+/* ── FILE TABLE ── */
+.file-table { width: 100%; border-collapse: collapse; font-size: .87rem; margin-top: .75rem; }
+.file-table th {
+  text-align: left;
+  padding: .5rem .9rem;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+}
+.file-table td {
+  padding: .55rem .9rem;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.file-table tr:nth-child(even) td { background: rgba(255,255,255,.015); }
+.file-table code { font-size: .78rem; color: var(--accent); }
+.badge-secret  { background: rgba(239,68,68,.1);  color: var(--red);   border: 1px solid rgba(239,68,68,.25);  border-radius: 2px; padding: .1rem .5rem; font-size: .7rem; font-family: 'JetBrains Mono', monospace; }
+.badge-public  { background: rgba(34,197,94,.1);  color: var(--green); border: 1px solid rgba(34,197,94,.25);  border-radius: 2px; padding: .1rem .5rem; font-size: .7rem; font-family: 'JetBrains Mono', monospace; }
+.badge-log    { background: rgba(0,229,255,.1);   color: var(--accent);border: 1px solid rgba(0,229,255,.25);  border-radius: 2px; padding: .1rem .5rem; font-size: .7rem; font-family: 'JetBrains Mono', monospace; }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 2.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: .82rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ── INSTALL BANNER ── */
+.install-banner {
+  background: linear-gradient(135deg, rgba(0,229,255,.05) 0%, rgba(124,58,237,.05) 100%);
+  border: 1px solid rgba(0,229,255,.2);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.install-banner h3 {
+  color: var(--accent);
+  font-size: .85rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .08em;
+  margin-bottom: .75rem;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-badge">Documentation · v1.0.0</div>
+  <h1>ssl-<span>generator</span></h1>
+  <p>Complete step-by-step guide — from installation to PKI certificate generation</p>
+  <div class="header-meta">
+    <span class="meta-pill green">✓ OpenSSL 3.5.1 tested</span>
+    <span class="meta-pill cyan">x86_64 · RPM</span>
+    <span class="meta-pill purple">By Saad El-Kenawy</span>
+  </div>
+</header>
+
+<div class="wrapper">
+
+  <!-- ══ SECTION 1: INSTALL ══ -->
+  <div class="section-title">
+    <span class="num">01</span>
+    <h2>Installation</h2>
+  </div>
+
+  <div class="install-banner">
+    <h3>⚡ Quick Install via DNF/YUM Repository</h3>
+    <pre><code><span class="c"># Step 1 — Add the repository</span>
+<span class="kw">sudo curl</span> -o /etc/yum.repos.d/ssl-generator.repo \
+  <span class="st">https://saadelkenawy.github.io/ssl-generator-repo/ssl-generator.repo</span>
+
+<span class="c"># Step 2 — Install</span>
+<span class="kw">sudo dnf install</span> ssl-generator    <span class="c"># RHEL 8+ / Rocky / AlmaLinux / Fedora</span>
+<span class="kw">sudo yum install</span> ssl-generator    <span class="c"># RHEL 7 / CentOS 7</span></code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-cyan">📦</div>
+      <h3>Direct RPM Install (offline / air-gapped)</h3>
+    </div>
+    <pre><code><span class="kw">sudo rpm -ivh</span> \
+  <span class="st">https://saadelkenawy.github.io/ssl-generator-repo/x86_64/ssl-generator-1.0.0-1.x86_64.rpm</span></code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-green">✓</div>
+      <h3>Verify Installation</h3>
+    </div>
+    <pre><code><span class="kw">ssl-generator</span> --help</code></pre>
+    <div class="output-box">
+      <span class="hi">SSL Certificate Generator - Usage</span><br/>
+      &nbsp; Usage: ssl-generator [--help|-h]<br/>
+      &nbsp; Mode 1 &nbsp;Full PKI generation (Root CA + Intermediate CA + server cert)<br/>
+      &nbsp; Mode 2 &nbsp;Issue additional server certs using an existing CA<br/>
+      &nbsp; Prerequisites: <span class="ok">OpenSSL >= 1.1.1</span>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>Prerequisites</strong>
+    OpenSSL ≥ 1.1.1 must be installed. It is automatically pulled in as a dependency when installing via DNF/YUM.
+  </div>
+
+  <!-- ══ SECTION 2: MODE 1 ══ -->
+  <div class="section-title">
+    <span class="num">02</span>
+    <h2>Mode 1 — Full PKI Generation</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-purple">🏗</div>
+      <h3>What it generates</h3>
+    </div>
+    <ul class="step-list">
+      <li><span class="step-num">→</span><div class="step-content"><p>Root CA (4096-bit, 10-year validity)</p><em>The trust anchor. Install root_cert.pem into your trusted store.</em></div></li>
+      <li><span class="step-num">→</span><div class="step-content"><p>Intermediate CA (4096-bit, 5-year validity)</p><em>Signs all server certificates. Keep inter_key.pem secret.</em></div></li>
+      <li><span class="step-num">→</span><div class="step-content"><p>Server Certificate (2048-bit, 3-year validity)</p><em>Ready-to-use TLS cert with SAN support.</em></div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-green">▶</div>
+      <h3>Run Mode 1</h3>
+    </div>
+    <pre><code><span class="kw">ssl-generator</span></code></pre>
+    <div class="output-box">
+<span class="hi">===================================================</span><br/>
+<span class="hi">&nbsp;&nbsp; PKI Certificate Generator | By Saad El-Kenawy</span><br/>
+<span class="hi">===================================================</span><br/>
+<br/>
+<span class="ok">OpenSSL 3.5.1 detected.</span><br/>
+<br/>
+Select operation mode:<br/>
+&nbsp; 1) Generate new PKI (Root CA + Intermediate CA + first server certificate)<br/>
+&nbsp; 2) Generate additional server certificate using existing CA<br/>
+Enter choice (1 or 2): <span class="hi">1</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-cyan">📝</div>
+      <h3>Interactive Prompts — Mode 1</h3>
+    </div>
+    <ul class="step-list">
+      <li><span class="step-num">01</span><div class="step-content"><p>Organization Name (O)</p><em>e.g., &nbsp;MyCompany &nbsp;· &nbsp;ssz &nbsp;· &nbsp;test</em></div></li>
+      <li><span class="step-num">02</span><div class="step-content"><p>Country Code (C) — 2 uppercase letters</p><em>e.g., &nbsp;EG &nbsp;· &nbsp;US &nbsp;· &nbsp;GB</em></div></li>
+      <li><span class="step-num">03</span><div class="step-content"><p>State or Province (ST)</p><em>e.g., &nbsp;Cairo &nbsp;· &nbsp;California</em></div></li>
+      <li><span class="step-num">04</span><div class="step-content"><p>Locality / City (L)</p><em>e.g., &nbsp;Giza &nbsp;· &nbsp;San Francisco</em></div></li>
+      <li><span class="step-num">05</span><div class="step-content"><p>Organizational Unit (OU) — optional</p><em>e.g., &nbsp;IT &nbsp;· &nbsp;DevOps &nbsp;· &nbsp;(leave empty to skip)</em></div></li>
+      <li><span class="step-num">06</span><div class="step-content"><p>Operator Name</p><em>Your name — logged in generation.log for auditing</em></div></li>
+      <li><span class="step-num">07</span><div class="step-content"><p>Primary Domain (CN)</p><em>e.g., &nbsp;api.example.com &nbsp;· &nbsp;test.com &nbsp;— must contain a dot, no wildcards here</em></div></li>
+      <li><span class="step-num">08</span><div class="step-content"><p>SAN DNS entries (comma-separated, optional)</p><em>e.g., &nbsp;*.example.com,alt.example.com &nbsp;— wildcards allowed</em></div></li>
+      <li><span class="step-num">09</span><div class="step-content"><p>SAN IP entries (comma-separated, optional)</p><em>e.g., &nbsp;10.0.0.1,192.168.1.50 &nbsp;— valid IPv4 only</em></div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-green">✓</div>
+      <h3>Expected Output</h3>
+    </div>
+    <div class="output-box">
+<span class="ok">[*] Creating Root CA...</span><br/>
+<span class="ok">[*] Creating Intermediate CA...</span><br/>
+<span class="ok">[*] Creating Server Certificate for test.com...</span><br/>
+<span class="ok">Server certificate generated: test-com.crt (valid for 3 years)</span><br/>
+<span class="ok">Full chain: test-com-fullchain.pem</span><br/>
+<span class="ok">[*] Verifying certificate chain for test-com.crt...</span><br/>
+<span class="ok">Chain verification: PASSED</span><br/>
+<span class="ok">Certificate info saved: test-com-cert-info.txt</span><br/>
+<span class="ok">Generation log updated: generation.log</span><br/>
+<br/>
+<span class="ok">PKI generation complete. Files are in: /root/certs_test-com_20260325</span>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: OUTPUT FILES ══ -->
+  <div class="section-title">
+    <span class="num">03</span>
+    <h2>Output Files — Mode 1</h2>
+  </div>
+
+  <div class="card">
+    <table class="file-table">
+      <thead>
+        <tr><th>File</th><th>Description</th><th>Sensitivity</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>root_key.pem</code></td><td>Root CA private key</td><td><span class="badge-secret">SECRET</span></td></tr>
+        <tr><td><code>root_cert.pem</code></td><td>Root CA certificate — install into trusted store</td><td><span class="badge-public">PUBLIC</span></td></tr>
+        <tr><td><code>inter_key.pem</code></td><td>Intermediate CA private key</td><td><span class="badge-secret">SECRET</span></td></tr>
+        <tr><td><code>inter_cert.pem</code></td><td>Intermediate CA certificate</td><td><span class="badge-public">PUBLIC</span></td></tr>
+        <tr><td><code>fullchain.pem</code></td><td>CA chain (intermediate + root)</td><td><span class="badge-public">PUBLIC</span></td></tr>
+        <tr><td><code>&lt;domain&gt;.key</code></td><td>Server private key — keep secure</td><td><span class="badge-secret">SECRET</span></td></tr>
+        <tr><td><code>&lt;domain&gt;.crt</code></td><td>Server certificate</td><td><span class="badge-public">PUBLIC</span></td></tr>
+        <tr><td><code>&lt;domain&gt;-fullchain.pem</code></td><td>Full chain (server + intermediate + root)</td><td><span class="badge-public">PUBLIC</span></td></tr>
+        <tr><td><code>&lt;domain&gt;-cert-info.txt</code></td><td>Human-readable certificate details</td><td><span class="badge-log">INFO</span></td></tr>
+        <tr><td><code>generation.log</code></td><td>Audit log of this generation session</td><td><span class="badge-log">LOG</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="warn">
+    <strong>⚠ Security</strong>
+    All <code>.key</code> files are stored <strong>unencrypted</strong>. Restrict access to the output directory immediately after generation: &nbsp;<code>chmod 700 /root/certs_*/</code>
+  </div>
+
+  <!-- ══ SECTION 4: MODE 2 ══ -->
+  <div class="section-title">
+    <span class="num">04</span>
+    <h2>Mode 2 — Additional Server Certificates</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-yellow">🔁</div>
+      <h3>When to use Mode 2</h3>
+    </div>
+    <p style="font-size:.93rem; color:var(--muted);">Use Mode 2 when you already have a Root CA + Intermediate CA from a previous Mode 1 run, and you need to issue additional server certificates signed by the same CA — without rebuilding the entire PKI.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-green">▶</div>
+      <h3>Run Mode 2</h3>
+    </div>
+    <pre><code><span class="kw">ssl-generator</span></code></pre>
+    <div class="output-box">
+Enter choice (1 or 2): <span class="hi">2</span><br/>
+<br/>
+Mode 2: Generate additional server certificate using existing CA<br/>
+You will need the directory containing the existing CA files:<br/>
+&nbsp; - inter_key.pem &nbsp; (Intermediate CA private key)<br/>
+&nbsp; - inter_cert.pem  (Intermediate CA certificate)<br/>
+&nbsp; - root_cert.pem &nbsp; (Root CA certificate)<br/>
+<br/>
+Enter the full path to the directory containing CA files: <span class="hi">/root/certs_test-com_20260325/</span>
+    </div>
+    <div class="warn" style="margin-top:.75rem;">
+      <strong>⚠ Always use the absolute path</strong>
+      Use <code>/root/certs_test-com_20260325/</code> — not a relative path like <code>certs_test-com_20260325/</code> — to avoid path resolution errors.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-cyan">📝</div>
+      <h3>Interactive Prompts — Mode 2</h3>
+    </div>
+    <ul class="step-list">
+      <li><span class="step-num">01</span><div class="step-content"><p>CA directory path</p><em>Full absolute path to directory containing inter_key.pem, inter_cert.pem, root_cert.pem</em></div></li>
+      <li><span class="step-num">02</span><div class="step-content"><p>DN fields auto-extracted from existing intermediate cert</p><em>C, ST, L, O, OU are reused automatically — no re-entry needed</em></div></li>
+      <li><span class="step-num">03</span><div class="step-content"><p>New server domain (CN)</p><em>e.g., proxy.test.com · api.test.com · Must contain a dot</em></div></li>
+      <li><span class="step-num">04</span><div class="step-content"><p>SAN DNS entries (optional)</p><em>Comma-separated, wildcards allowed</em></div></li>
+      <li><span class="step-num">05</span><div class="step-content"><p>SAN IP entries (optional)</p><em>Comma-separated IPv4 addresses</em></div></li>
+      <li><span class="step-num">06</span><div class="step-content"><p>Create another certificate? (y/n)</p><em>Loop to issue multiple certs in one session</em></div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon icon-green">✓</div>
+      <h3>Expected Output — Mode 2</h3>
+    </div>
+    <div class="output-box">
+<span class="ok">Extracting organization details from existing intermediate certificate...</span><br/>
+Using existing DN: C=EG, ST=cairo, L=giza, O=test, OU=IT<br/>
+<br/>
+<span class="ok">[*] Creating Server Certificate for proxy.test.com...</span><br/>
+<span class="ok">Server certificate generated: proxy-test-com.crt (valid for 3 years)</span><br/>
+<span class="ok">Full chain: proxy-test-com-fullchain.pem</span><br/>
+<span class="ok">Chain verification: PASSED</span><br/>
+<span class="ok">Certificate info saved: proxy-test-com-cert-info.txt</span><br/>
+<br/>
+New server certificate generated in: <span class="hi">/root/certs_proxy-test-com_20260325</span><br/>
+<br/>
+Do you want to create another certificate? (y/n): <span class="hi">n</span>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- ══ SECTION 5: UNINSTALL ══ -->
+  <div class="section-title">
+    <span class="num">05</span>
+    <h2>Uninstall</h2>
+  </div>
+
+  <div class="card">
+    <pre><code><span class="kw">sudo dnf remove</span> ssl-generator    <span class="c"># RHEL 8+ / Rocky / AlmaLinux / Fedora</span>
+<span class="kw">sudo yum remove</span> ssl-generator    <span class="c"># RHEL 7 / CentOS 7</span></code></pre>
+  </div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  ssl-generator · By Saad El-Kenawy ·
+  <a href="https://saadelkenawy.github.io/ssl-generator-repo" target="_blank">Repository</a> ·
+  <a href="https://github.com/saadelkenawy/ssl-generator-repo" target="_blank">GitHub</a>
+</footer>
+
+</body>
+</html>
