@@ -7,9 +7,9 @@ services:
     container_name: ssl-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ssldb
-      POSTGRES_USER:     ssluser
-      POSTGRES_PASSWORD: sslpass
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -24,11 +24,19 @@ services:
     volumes:
       - ./certs:/output
     environment:
-      DATABASE_URL:      postgresql://ssluser:sslpass@db:5432/ssldb
-      SECRET_KEY:        your-secret-key-here
+      DATABASE_URL:        ${DATABASE_URL}
+      SECRET_KEY:          ${SECRET_KEY}
       # ── Google OAuth ──
-      GOOGLE_CLIENT_ID:     your-google-client-id-here
-      GOOGLE_CLIENT_SECRET: your-google-client-secret-here
+      GOOGLE_CLIENT_ID:     ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      # ── Facebook OAuth ──
+      FACEBOOK_CLIENT_ID:     ${FACEBOOK_CLIENT_ID}
+      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
+      # ── Mail ──
+      MAIL_SERVER:   ${MAIL_SERVER}
+      MAIL_PORT:     ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
     depends_on:
       - db
 
