@@ -1,0 +1,32 @@
+# ============================================================
+# Dockerfile — SSL Generator Web App
+# Base: Rocky-9 | Flask + OpenSSL + ssl-generator.sh
+# ============================================================
+FROM rockylinux:9
+
+RUN dnf install -y \
+      python3 \
+      python3-pip \
+      openssl \
+      bash \
+      gcc \
+      libpq-devel \
+      python3-devel \
+    && dnf clean all
+
+COPY requirements.txt /app/requirements.txt
+RUN pip3 install -r /app/requirements.txt
+
+COPY ssl-generator.sh /usr/local/bin/ssl-generator.sh
+RUN chmod +x /usr/local/bin/ssl-generator.sh
+
+COPY app.py /app/app.py
+COPY templates/ /app/templates/
+
+RUN mkdir -p /output
+
+WORKDIR /app
+
+EXPOSE 5000
+
+CMD ["python3", "app.py"]

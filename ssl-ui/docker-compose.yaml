@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:15-alpine
+    container_name: ssl-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ssldb
+      POSTGRES_USER:     ssluser
+      POSTGRES_PASSWORD: sslpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: ssl-web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./certs:/output
+    environment:
+      DATABASE_URL:      postgresql://ssluser:sslpass@db:5432/ssldb
+      SECRET_KEY:        your-secret-key-here
+      # ── Google OAuth ──
+      GOOGLE_CLIENT_ID:     your-google-client-id-here
+      GOOGLE_CLIENT_SECRET: your-google-client-secret-here
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

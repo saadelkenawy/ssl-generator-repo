@@ -1,0 +1,21 @@
+# Claude Code internal files
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Certificates / secrets
+*.pem
+*.key
+*.crt
+*.p12
+ssl-ui/certs/
+
+# OS
+.DS_Store
+Thumbs.db
